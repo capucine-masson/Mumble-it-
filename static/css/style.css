@@ -320,10 +320,15 @@ button {
 
 .platform-link {
   display: inline-flex;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 5px;
   overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.1s ease;
 }
 
@@ -331,9 +336,10 @@ button {
   transform: translateY(-1px) scale(1.05);
 }
 
-.platform-link svg {
+.platform-link img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
 
 /* Toast de confirmation */
@@ -342,9 +348,8 @@ button {
   top: 1.25rem;
   left: 50%;
   transform: translateX(-50%) translateY(-30px);
-  background: rgba(20, 4, 15, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(135deg, var(--color-orange), var(--color-magenta));
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   padding: 0.65rem 1.1rem;
   border-radius: 999px;

@@ -1,8 +1,8 @@
 import { el } from "./dom.js";
 
 const ICON_SRC = {
-  youtube: "/static/img/youtube-logo.png",
-  spotify: "/static/img/file-spotify-logo-png-4.png",
+  youtube: "/static/img/Youtube-Logo.png",
+  spotify: "/static/img/Spotify-Logo.png",
   deezer: "/static/img/Deezer_Logo.jpg",
 };
 
