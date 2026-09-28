@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from config import UPLOAD_DIR
 from database import init_db
-from routers import analysis, folders, pages, recordings
+from routers import analysis, pages, recordings
 
 
 @asynccontextmanager
@@ -20,7 +20,6 @@ app = FastAPI(title="Mumble It", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(pages.router)
 app.include_router(recordings.router)
-app.include_router(folders.router)
 app.include_router(analysis.router)
 
 

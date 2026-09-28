@@ -32,7 +32,7 @@ function initRecordPage() {
         formData.append("audio", blob, "recording.webm");
         await apiFetch("/recordings", { method: "POST", body: formData, isForm: true });
         setStatus("Prêt à écouter ton fredonnement");
-        showToast("Fredonnement enregistré !", { actionLabel: "Voir la bibliothèque", actionHref: "/library" });
+        showToast("Fredonnement enregistré, analyse en cours...", { actionLabel: "Voir la bibliothèque", actionHref: "/library" });
       } catch (err) {
         setStatus(err.message || "Erreur lors de l'envoi.");
       } finally {

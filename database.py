@@ -3,18 +3,9 @@ import sqlite3
 from config import DB_PATH
 
 SCHEMA = """
-CREATE TABLE IF NOT EXISTS folders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    pseudo TEXT NOT NULL DEFAULT 'anonyme',
-    name TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-    UNIQUE(pseudo, name)
-);
-
 CREATE TABLE IF NOT EXISTS recordings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     pseudo TEXT NOT NULL DEFAULT 'anonyme',
-    folder_id INTEGER NULL REFERENCES folders(id) ON DELETE SET NULL,
     filename TEXT NOT NULL,
     original_mime TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
@@ -28,7 +19,6 @@ CREATE TABLE IF NOT EXISTS recordings (
 );
 
 CREATE INDEX IF NOT EXISTS idx_recordings_pseudo ON recordings(pseudo);
-CREATE INDEX IF NOT EXISTS idx_folders_pseudo ON folders(pseudo);
 """
 
 

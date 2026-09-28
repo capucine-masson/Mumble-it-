@@ -1,16 +1,16 @@
 import os
 import sqlite3
 import uuid
-from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
 from config import UPLOAD_DIR
 from database import get_db
 from dependencies import get_current_pseudo
-from models import RecordingFolderUpdate, RecordingOut
+from models import RecordingOut
 from serializers import row_to_recording_out
+from services.analysis_service import run_analysis
 
 router = APIRouter(prefix="/recordings", tags=["recordings"])
 
@@ -32,21 +32,14 @@ def _extension_for(mime_type: str) -> str:
 
 @router.post("", response_model=RecordingOut, status_code=201)
 async def create_recording(
+    background_tasks: BackgroundTasks,
     audio: UploadFile = File(...),
-    folder_id: Optional[int] = Form(default=None),
     pseudo: str = Depends(get_current_pseudo),
     db: sqlite3.Connection = Depends(get_db),
 ):
     content_type = (audio.content_type or "").lower()
     if not content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Le fichier envoyé n'est pas un fichier audio.")
-
-    if folder_id is not None:
-        folder_row = db.execute(
-            "SELECT id FROM folders WHERE id = ? AND pseudo = ?", (folder_id, pseudo)
-        ).fetchone()
-        if folder_row is None:
-            raise HTTPException(status_code=404, detail="Dossier introuvable.")
 
     data = await audio.read()
     if not data:
@@ -59,28 +52,26 @@ async def create_recording(
         f.write(data)
 
     cursor = db.execute(
-        "INSERT INTO recordings (pseudo, folder_id, filename, original_mime) VALUES (?, ?, ?, ?)",
-        (pseudo, folder_id, filename, content_type),
+        "INSERT INTO recordings (pseudo, filename, original_mime) VALUES (?, ?, ?)",
+        (pseudo, filename, content_type),
     )
     db.commit()
 
-    row = db.execute("SELECT * FROM recordings WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    recording_id = cursor.lastrowid
+    background_tasks.add_task(run_analysis, recording_id)
+
+    row = db.execute("SELECT * FROM recordings WHERE id = ?", (recording_id,)).fetchone()
     return row_to_recording_out(row)
 
 
 @router.get("", response_model=list[RecordingOut])
 def list_recordings(
-    folder_id: Optional[int] = None,
     pseudo: str = Depends(get_current_pseudo),
     db: sqlite3.Connection = Depends(get_db),
 ):
-    query = "SELECT * FROM recordings WHERE pseudo = ?"
-    params: list = [pseudo]
-    if folder_id is not None:
-        query += " AND folder_id = ?"
-        params.append(folder_id)
-    query += " ORDER BY created_at DESC"
-    rows = db.execute(query, params).fetchall()
+    rows = db.execute(
+        "SELECT * FROM recordings WHERE pseudo = ? ORDER BY created_at DESC", (pseudo,)
+    ).fetchall()
     return [row_to_recording_out(row) for row in rows]
 
 
@@ -134,33 +125,3 @@ def delete_recording(
     path = os.path.join(UPLOAD_DIR, row["filename"])
     if os.path.isfile(path):
         os.remove(path)
-
-
-@router.put("/{recording_id}/folder", response_model=RecordingOut)
-def update_recording_folder(
-    recording_id: int,
-    payload: RecordingFolderUpdate,
-    pseudo: str = Depends(get_current_pseudo),
-    db: sqlite3.Connection = Depends(get_db),
-):
-    row = db.execute(
-        "SELECT id FROM recordings WHERE id = ? AND pseudo = ?", (recording_id, pseudo)
-    ).fetchone()
-    if row is None:
-        raise HTTPException(status_code=404, detail="Fredonnement introuvable.")
-
-    if payload.folder_id is not None:
-        folder_row = db.execute(
-            "SELECT id FROM folders WHERE id = ? AND pseudo = ?", (payload.folder_id, pseudo)
-        ).fetchone()
-        if folder_row is None:
-            raise HTTPException(status_code=404, detail="Dossier introuvable.")
-
-    db.execute(
-        "UPDATE recordings SET folder_id = ? WHERE id = ? AND pseudo = ?",
-        (payload.folder_id, recording_id, pseudo),
-    )
-    db.commit()
-
-    updated = db.execute("SELECT * FROM recordings WHERE id = ?", (recording_id,)).fetchone()
-    return row_to_recording_out(updated)
