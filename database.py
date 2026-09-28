@@ -1,0 +1,57 @@
+import sqlite3
+
+from config import DB_PATH
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS folders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pseudo TEXT NOT NULL DEFAULT 'anonyme',
+    name TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    UNIQUE(pseudo, name)
+);
+
+CREATE TABLE IF NOT EXISTS recordings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pseudo TEXT NOT NULL DEFAULT 'anonyme',
+    folder_id INTEGER NULL REFERENCES folders(id) ON DELETE SET NULL,
+    filename TEXT NOT NULL,
+    original_mime TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    transcript TEXT NULL,
+    guessed_title TEXT NULL,
+    guessed_artist TEXT NULL,
+    analysis_status TEXT NOT NULL DEFAULT 'none' CHECK(analysis_status IN ('none','pending','done','error')),
+    analysis_error TEXT NULL,
+    deezer_track_id TEXT NULL,
+    deezer_link TEXT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_recordings_pseudo ON recordings(pseudo);
+CREATE INDEX IF NOT EXISTS idx_folders_pseudo ON folders(pseudo);
+"""
+
+
+def get_connection() -> sqlite3.Connection:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+
+def init_db() -> None:
+    conn = get_connection()
+    try:
+        conn.execute("PRAGMA journal_mode = WAL")
+        conn.executescript(SCHEMA)
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_db():
+    conn = get_connection()
+    try:
+        yield conn
+    finally:
+        conn.close()
