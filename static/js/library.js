@@ -2,6 +2,7 @@ import { el } from "./dom.js";
 import { apiFetch } from "./api.js";
 import { analyzeRecording } from "./analysis.js";
 import { platformLink } from "./platform_icons.js";
+import { buildAudioPlayer } from "./audio_player.js";
 
 let pollIntervalId = null;
 
@@ -44,9 +45,7 @@ function renderRecordingCard(recording) {
     el("p", { attrs: { class: "recording-date" }, text: new Date(recording.created_at + "Z").toLocaleString("fr-FR") })
   );
 
-  children.push(
-    el("audio", { attrs: { controls: "true", preload: "none", src: `/recordings/${recording.id}/audio` } })
-  );
+  children.push(buildAudioPlayer(`/recordings/${recording.id}/audio`));
 
   if (recording.analysis_status === "done") {
     const title = recording.guessed_title || "Inconnu";

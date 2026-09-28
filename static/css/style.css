@@ -238,7 +238,7 @@ button {
 /* Bibliothèque */
 .library {
   width: 100%;
-  max-width: 720px;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -253,12 +253,13 @@ button {
 }
 
 .recordings-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 0.75rem;
 }
 
 .empty-state {
+  grid-column: 1 / -1;
   text-align: center;
   opacity: 0.7;
   font-style: italic;
@@ -268,19 +269,47 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.45rem;
-  background: rgba(255, 255, 255, 0.08);
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
   padding: 0.75rem 1rem;
 }
 
-.recording-card audio {
+.audio-player {
   align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.recording-card audio {
-  width: 100%;
-  height: 32px;
+.play-btn {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-pink);
+  color: #fff;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.audio-progress {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  accent-color: var(--color-yellow);
+}
+
+.audio-time {
+  flex: none;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  min-width: 2.2em;
 }
 
 .recording-date {
@@ -293,14 +322,14 @@ button {
   margin: 0;
   font-family: var(--font-title);
   font-size: 1.05rem;
-  color: var(--color-yellow);
+  color: #fff;
 }
 
 .transcript-text {
   margin: 0;
   font-family: var(--font-accent);
   font-size: 1.15rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-yellow);
 }
 
 .status-text {
