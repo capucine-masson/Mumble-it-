@@ -339,12 +339,14 @@ button {
 /* Toast de confirmation */
 .toast {
   position: fixed;
-  bottom: 1.5rem;
+  top: 1.25rem;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--color-pink);
+  transform: translateX(-50%) translateY(-30px);
+  background: rgba(20, 4, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
   color: #fff;
-  padding: 0.75rem 1.25rem;
+  padding: 0.65rem 1.1rem;
   border-radius: 999px;
   display: flex;
   align-items: center;
@@ -353,6 +355,7 @@ button {
   opacity: 0;
   transition: opacity 0.25s ease, transform 0.25s ease;
   z-index: 50;
+  max-width: calc(100vw - 2rem);
 }
 
 .toast[hidden] {
@@ -365,7 +368,8 @@ button {
 }
 
 .toast-message {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .toast-action {
