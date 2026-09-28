@@ -1,8 +1,8 @@
 :root {
-  --color-deep-purple: #390099;
   --color-magenta: #9E0059;
   --color-pink: #FF0054;
   --color-orange: #FF5400;
+  --color-yellow: #FFBD00;
   --font-title: 'Alfa Slab One', cursive;
   --font-body: 'Alata', sans-serif;
   --font-accent: 'Alex Brush', cursive;
@@ -17,7 +17,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: #fff;
-  background: radial-gradient(circle at top, var(--color-magenta), var(--color-deep-purple) 70%);
+  background: radial-gradient(circle at 50% 28%, var(--color-pink) 0%, var(--color-magenta) 80%);
 }
 
 .topbar {
@@ -74,7 +74,8 @@ body {
 .brand-tagline {
   font-family: var(--font-accent);
   font-size: 1.2rem;
-  color: var(--color-orange);
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 }
 
 .page {
@@ -96,9 +97,10 @@ body {
 
 .hint {
   font-family: var(--font-accent);
-  font-size: 1.6rem;
-  color: var(--color-orange);
+  font-size: 1.8rem;
+  color: #fff;
   margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 .record-button {
@@ -106,7 +108,7 @@ body {
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  border: none;
+  border: 12px solid #fff;
   padding: 0;
   cursor: pointer;
   background: transparent;
@@ -114,6 +116,27 @@ body {
   align-items: center;
   justify-content: center;
   transition: transform 0.15s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.record-button::before,
+.record-button::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.record-button::before {
+  inset: -30px;
+  background: rgba(255, 255, 255, 0.14);
+  z-index: -1;
+}
+
+.record-button::after {
+  inset: -64px;
+  background: rgba(255, 255, 255, 0.07);
+  z-index: -2;
 }
 
 .record-button:hover {
@@ -129,13 +152,19 @@ body {
   opacity: 0.7;
 }
 
+.record-logo-mask {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+}
+
 .record-logo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-  transform: scale(1.4);
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.15), 0 20px 40px rgba(0, 0, 0, 0.35);
+  transform: scale(1.05);
 }
 
 .record-ring {
@@ -144,7 +173,7 @@ body {
   border-radius: 50%;
   pointer-events: none;
   --progress: 0;
-  background: conic-gradient(var(--color-orange) calc(var(--progress) * 360deg), transparent 0deg);
+  background: conic-gradient(var(--color-yellow) calc(var(--progress) * 360deg), transparent 0deg);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -184,6 +213,10 @@ button {
   color: #fff;
   background: var(--color-pink);
   transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.analyze-btn {
+  background: var(--color-orange);
 }
 
 .pseudo-btn:hover,
@@ -313,7 +346,7 @@ button {
   margin: 0;
   font-family: var(--font-title);
   font-size: 1.2rem;
-  color: var(--color-orange);
+  color: var(--color-yellow);
 }
 
 .transcript-text {
@@ -348,7 +381,7 @@ button {
 }
 
 .link-btn.deezer {
-  background: var(--color-deep-purple);
+  background: var(--color-magenta);
 }
 
 .link-btn.youtube {
@@ -367,4 +400,43 @@ button {
 
 .folder-select option {
   color: #000;
+}
+
+/* Toast de confirmation */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--color-pink);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+}
+
+.toast[hidden] {
+  display: none;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-message {
+  font-size: 0.95rem;
+}
+
+.toast-action {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: underline;
+  white-space: nowrap;
 }

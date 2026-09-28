@@ -2,6 +2,7 @@ import { Recorder } from "./recorder.js";
 import { apiFetch } from "./api.js";
 import { initLibraryPage } from "./library.js";
 import { renderPseudoBar } from "./pseudo.js";
+import { showToast } from "./toast.js";
 
 function initRecordPage() {
   const button = document.getElementById("record-button");
@@ -30,7 +31,8 @@ function initRecordPage() {
         const formData = new FormData();
         formData.append("audio", blob, "recording.webm");
         await apiFetch("/recordings", { method: "POST", body: formData, isForm: true });
-        setStatus("Fredonnement enregistré !");
+        setStatus("Prêt à écouter ton fredonnement");
+        showToast("Fredonnement enregistré !", { actionLabel: "Voir la bibliothèque", actionHref: "/library" });
       } catch (err) {
         setStatus(err.message || "Erreur lors de l'envoi.");
       } finally {
