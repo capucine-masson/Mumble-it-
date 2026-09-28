@@ -33,7 +33,10 @@ CREATE INDEX IF NOT EXISTS idx_folders_pseudo ON folders(pseudo);
 
 
 def get_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH)
+    # check_same_thread=False : FastAPI résout les dépendances synchrones dans un thread
+    # de pool distinct du thread d'exécution des routes async ; la connexion créée par
+    # get_db() doit donc pouvoir être utilisée depuis un autre thread que celui qui l'a ouverte.
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn

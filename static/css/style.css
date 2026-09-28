@@ -1,0 +1,135 @@
+:root {
+  --color-deep-purple: #390099;
+  --color-magenta: #9E0059;
+  --color-pink: #FF0054;
+  --color-orange: #FF5400;
+  --font-title: 'Alfa Slab One', cursive;
+  --font-body: 'Alata', sans-serif;
+  --font-accent: 'Alex Brush', cursive;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: #fff;
+  background: radial-gradient(circle at top, var(--color-magenta), var(--color-deep-purple) 70%);
+}
+
+.topbar {
+  padding: 1.5rem 2rem;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #fff;
+  width: fit-content;
+}
+
+.brand-title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+}
+
+.brand-tagline {
+  font-family: var(--font-accent);
+  font-size: 1.2rem;
+  color: var(--color-orange);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px);
+  padding: 2rem;
+  text-align: center;
+}
+
+.record-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hint {
+  font-family: var(--font-accent);
+  font-size: 1.6rem;
+  color: var(--color-orange);
+  margin: 0;
+}
+
+.record-button {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.record-button:hover {
+  transform: scale(1.04);
+}
+
+.record-button:active {
+  transform: scale(0.97);
+}
+
+.record-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.record-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transform: scale(1.4);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.15), 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.record-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  pointer-events: none;
+  --progress: 0;
+  background: conic-gradient(var(--color-orange) calc(var(--progress) * 360deg), transparent 0deg);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.record-button.recording .record-ring {
+  opacity: 1;
+}
+
+.record-button.recording .record-logo {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+
+.record-status {
+  font-size: 1.1rem;
+  min-height: 1.5em;
+}

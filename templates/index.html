@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="record-screen">
+  <p class="hint">Appuie, fredonne, on s'occupe du reste</p>
+  <button id="record-button" class="record-button" type="button" aria-label="Démarrer l'enregistrement">
+    <span id="record-ring" class="record-ring"></span>
+    <img src="/static/img/logo-shazam-bis.jpg" alt="Logo Mumble It" class="record-logo">
+  </button>
+  <p id="record-status" class="record-status">Prêt à écouter ton fredonnement</p>
+</section>
+{% endblock %}
