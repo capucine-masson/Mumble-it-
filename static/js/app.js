@@ -1,5 +1,7 @@
 import { Recorder } from "./recorder.js";
 import { apiFetch } from "./api.js";
+import { initLibraryPage } from "./library.js";
+import { renderPseudoBar } from "./pseudo.js";
 
 function initRecordPage() {
   const button = document.getElementById("record-button");
@@ -50,5 +52,7 @@ function initRecordPage() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  renderPseudoBar();
   initRecordPage();
+  initLibraryPage();
 });

@@ -8,3 +8,8 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/")
 def index(request: Request):
     return templates.TemplateResponse(request, "index.html")
+
+
+@router.get("/library")
+def library(request: Request):
+    return templates.TemplateResponse(request, "library.html")

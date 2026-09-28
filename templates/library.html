@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="library">
+  <h1 class="library-title">Ma bibliothèque</h1>
+
+  <form id="new-folder-form" class="new-folder-form">
+    <input id="new-folder-name" type="text" placeholder="Nom du nouveau dossier" required>
+    <button type="submit">Créer</button>
+  </form>
+
+  <div id="folder-list" class="folder-list"></div>
+
+  <div id="recordings-list" class="recordings-list"></div>
+</section>
+{% endblock %}
