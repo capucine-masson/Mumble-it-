@@ -22,10 +22,15 @@ body {
 
 .topbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 1rem 2rem;
   padding: 1.5rem 2rem;
+}
+
+.topnav,
+.pseudo-bar {
+  margin-top: 0.35rem;
 }
 
 .topnav {
@@ -233,6 +238,11 @@ button {
 .danger-btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
 }
 
 /* Bibliothèque */
@@ -263,6 +273,15 @@ button {
   text-align: center;
   opacity: 0.7;
   font-style: italic;
+}
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-top: 0.4rem;
 }
 
 .recording-card {
@@ -371,14 +390,68 @@ button {
   object-fit: contain;
 }
 
+/* Fenêtre de confirmation */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 4, 15, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-magenta);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.modal-message {
+  margin: 0 0 1.25rem;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.modal-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  color: #fff;
+}
+
+.modal-btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.modal-btn-confirm {
+  background: var(--color-pink);
+}
+
 /* Toast de confirmation */
 .toast {
   position: fixed;
   top: 1.25rem;
   left: 50%;
   transform: translateX(-50%) translateY(-30px);
-  background: linear-gradient(135deg, var(--color-orange), var(--color-magenta));
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--color-magenta);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #fff;
   padding: 0.65rem 1.1rem;
   border-radius: 999px;

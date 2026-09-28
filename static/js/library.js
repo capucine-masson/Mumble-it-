@@ -1,8 +1,9 @@
-import { el } from "./dom.js";
+import { el, svgEl } from "./dom.js";
 import { apiFetch } from "./api.js";
 import { analyzeRecording } from "./analysis.js";
 import { platformLink } from "./platform_icons.js";
 import { buildAudioPlayer } from "./audio_player.js";
+import { confirmDialog } from "./modal.js";
 
 let pollIntervalId = null;
 
@@ -38,6 +39,18 @@ function render(recordings) {
   }
 }
 
+function trashIcon() {
+  return svgEl("svg", {
+    attrs: { viewBox: "0 0 24 24", width: "13", height: "13", "aria-hidden": "true" },
+    children: [
+      svgEl("path", { attrs: { d: "M9 3h6l1 2h4v2H4V5h4l1-2z", fill: "currentColor" } }),
+      svgEl("path", {
+        attrs: { d: "M6 8h12l-1 12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z", fill: "currentColor" },
+      }),
+    ],
+  });
+}
+
 function renderRecordingCard(recording) {
   const children = [];
 
@@ -46,6 +59,8 @@ function renderRecordingCard(recording) {
   );
 
   children.push(buildAudioPlayer(`/recordings/${recording.id}/audio`));
+
+  const footer = el("div", { attrs: { class: "card-footer" } });
 
   if (recording.analysis_status === "done") {
     const title = recording.guessed_title || "Inconnu";
@@ -63,7 +78,7 @@ function renderRecordingCard(recording) {
     for (const link of [deezer, spotify, youtube]) {
       if (link) links.appendChild(link);
     }
-    children.push(links);
+    footer.appendChild(links);
   } else if (recording.analysis_status === "error") {
     children.push(
       el("p", { attrs: { class: "status-text error" }, text: recording.analysis_error || "Erreur d'analyse." })
@@ -73,23 +88,25 @@ function renderRecordingCard(recording) {
       text: "Réessayer l'analyse",
     });
     retryBtn.addEventListener("click", () => analyzeRecording(recording.id, retryBtn, () => loadData()));
-    children.push(retryBtn);
+    footer.appendChild(retryBtn);
   } else {
     children.push(el("p", { attrs: { class: "status-text" }, text: "Analyse en cours..." }));
   }
 
-  children.push(
-    el("button", {
-      attrs: { type: "button", class: "danger-btn", onClick: () => deleteRecording(recording.id) },
-      text: "Supprimer",
-    })
-  );
+  const deleteBtn = el("button", {
+    attrs: { type: "button", class: "danger-btn", onClick: () => deleteRecording(recording.id) },
+    children: [trashIcon(), el("span", { text: "Supprimer" })],
+  });
+  footer.appendChild(deleteBtn);
+
+  children.push(footer);
 
   return el("article", { attrs: { class: "recording-card" }, children });
 }
 
 async function deleteRecording(recordingId) {
-  if (!window.confirm("Supprimer ce fredonnement ?")) return;
+  const confirmed = await confirmDialog("Supprimer ce fredonnement ?");
+  if (!confirmed) return;
   try {
     await apiFetch(`/recordings/${recordingId}`, { method: "DELETE" });
     await loadData();
