@@ -1,5 +1,5 @@
 import { el, svgEl } from "./dom.js";
-import { apiFetch } from "./api.js";
+import { apiFetch, getPseudo } from "./api.js";
 import { analyzeRecording } from "./analysis.js";
 import { platformLink } from "./platform_icons.js";
 import { buildAudioPlayer } from "./audio_player.js";
@@ -58,7 +58,7 @@ function renderRecordingCard(recording) {
     el("p", { attrs: { class: "recording-date" }, text: new Date(recording.created_at + "Z").toLocaleString("fr-FR") })
   );
 
-  children.push(buildAudioPlayer(`/recordings/${recording.id}/audio`));
+  children.push(buildAudioPlayer(`/recordings/${recording.id}/audio?pseudo=${encodeURIComponent(getPseudo())}`));
 
   const footer = el("div", { attrs: { class: "card-footer" } });
 
