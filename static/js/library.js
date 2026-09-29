@@ -71,14 +71,16 @@ function renderRecordingCard(recording) {
       children.push(el("p", { attrs: { class: "transcript-text" }, text: `« ${recording.transcript} »` }));
     }
 
-    const links = el("div", { attrs: { class: "platform-links" } });
-    const deezer = platformLink("deezer", recording.deezer_link);
-    const spotify = platformLink("spotify", recording.spotify_link);
-    const youtube = platformLink("youtube", recording.youtube_link);
-    for (const link of [deezer, spotify, youtube]) {
-      if (link) links.appendChild(link);
+    if (recording.guessed_title) {
+      const links = el("div", { attrs: { class: "platform-links" } });
+      const deezer = platformLink("deezer", recording.deezer_link);
+      const spotify = platformLink("spotify", recording.spotify_link);
+      const youtube = platformLink("youtube", recording.youtube_link);
+      for (const link of [deezer, spotify, youtube]) {
+        if (link) links.appendChild(link);
+      }
+      footer.appendChild(links);
     }
-    footer.appendChild(links);
   } else if (recording.analysis_status === "error") {
     children.push(
       el("p", { attrs: { class: "status-text error" }, text: recording.analysis_error || "Erreur d'analyse." })

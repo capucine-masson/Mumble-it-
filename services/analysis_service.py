@@ -38,16 +38,19 @@ async def run_analysis(recording_id: int) -> None:
             conn.execute("UPDATE recordings SET transcript = ? WHERE id = ?", (transcript, recording_id))
             conn.commit()
 
-            guess = await groq_client.guess_song(transcript)
-            if guess["titre"] == "Inconnu" and ENABLE_WEB_FALLBACK:
+            # On ne peut pas se fier à guess_song() (sans recherche) pour savoir s'il se
+            # trompe : il peut halluciner un titre plausible avec la même assurance qu'une
+            # vraie bonne réponse, sans jamais répondre "Inconnu" dans ce cas. La recherche
+            # web (ancrée sur de vraies paroles trouvées en ligne) est donc utilisée en
+            # priorité ; le LLM seul ne sert plus que de repli si le web est indisponible.
+            guess = None
+            if ENABLE_WEB_FALLBACK:
                 try:
-                    web_guess = await groq_client.guess_song_web(transcript)
-                    if web_guess["titre"] != "Inconnu":
-                        guess = web_guess
+                    guess = await groq_client.guess_song_web(transcript)
                 except groq_client.GroqError:
-                    # La recherche web est un bonus : si elle échoue, on garde "Inconnu"
-                    # plutôt que de faire échouer toute l'analyse.
-                    pass
+                    guess = None
+            if guess is None:
+                guess = await groq_client.guess_song(transcript)
             conn.execute(
                 "UPDATE recordings SET guessed_title = ?, guessed_artist = ? WHERE id = ?",
                 (guess["titre"], guess["artiste"], recording_id),
