@@ -71,7 +71,7 @@ function renderRecordingCard(recording) {
       children.push(el("p", { attrs: { class: "transcript-text" }, text: `« ${recording.transcript} »` }));
     }
 
-    if (recording.guessed_title) {
+    if (recording.guessed_title && recording.guessed_title !== "Inconnu") {
       const links = el("div", { attrs: { class: "platform-links" } });
       const deezer = platformLink("deezer", recording.deezer_link);
       const spotify = platformLink("spotify", recording.spotify_link);

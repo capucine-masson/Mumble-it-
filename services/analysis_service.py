@@ -57,7 +57,9 @@ async def run_analysis(recording_id: int) -> None:
             )
             conn.commit()
 
-            deezer_result = await deezer_client.search_track(guess["titre"], guess["artiste"])
+            deezer_result = None
+            if guess["titre"] != "Inconnu":
+                deezer_result = await deezer_client.search_track(guess["titre"], guess["artiste"])
             conn.execute(
                 "UPDATE recordings SET deezer_track_id = ?, deezer_link = ?, analysis_status = 'done' WHERE id = ?",
                 (
