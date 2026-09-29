@@ -93,7 +93,7 @@ async def transcribe_audio(file_path: str, mime_type: str) -> str:
         async with httpx.AsyncClient(timeout=TRANSCRIBE_TIMEOUT) as client:
             with open(file_path, "rb") as f:
                 files = {"file": (file_path, f, mime_type or "application/octet-stream")}
-                data = {"model": WHISPER_MODEL, "response_format": "json"}
+                data = {"model": WHISPER_MODEL, "response_format": "json", "temperature": 0}
                 response = await client.post(
                     f"{GROQ_BASE_URL}/audio/transcriptions", headers=headers, files=files, data=data
                 )
