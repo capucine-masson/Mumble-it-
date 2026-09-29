@@ -75,6 +75,6 @@ data/                  → base SQLite + fichiers audio uploadés
 
 ## Aperçu
 
-| Accueil | Bibliothèque |
-|---|---|
-| ![Accueil](apercu/accueil.png) | ![Bibliothèque](apercu/bibli.png) |
+![Accueil](apercu/accueil.png)
+
+![Bibliothèque](apercu/bibli.png)
