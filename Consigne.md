@@ -12,8 +12,8 @@ Contrainte de méthode : ne code rien avant d'avoir proposé un découpage en é
 2. V1 : Enregistrement de notre fredonnement lorsqu'on appuie sur le gros logo shazam bis qui sera placé au milieu de l'écran
 3. V1 : Possibilité de réécouter - supprimer ranger dans dossiers - notre fredonnement
 4. V2 : Analyse de l'enregistrement par un LLM (clé API GROQ) qui a pour but de retrouver la musique (chanteur + titre) deux appels Groq séparés, chacun avec une responsabilité unique.
-4.1 : Appel 1 — Transcription : POST du fichier audio vers l'endpoint Whisper de Groq (whisper-large-v3 ou la variante turbo), qui te renvoie du texte brut.
-4.2 : Appel 2 — Devinette : ce texte transcrit part dans un prompt vers un modèle de chat Groq (ex: llama-3.3-70b-versatile), avec une instruction du type "Voici des paroles approximatives fredonnées, devine le titre et l'artiste, réponds en JSON structuré {titre, artiste}".
+4.1 : Appel 1 - Transcription : POST du fichier audio vers l'endpoint Whisper de Groq (whisper-large-v3 ou la variante turbo), qui te renvoie du texte brut.
+4.2 : Appel 2 - Devinette : ce texte transcrit part dans un prompt vers un modèle de chat Groq (ex: llama-3.3-70b-versatile), avec une instruction du type "Voici des paroles approximatives fredonnées, devine le titre et l'artiste, réponds en JSON structuré {titre, artiste}".
 5. V3 : Donne avec ça le lien de la chanson sur deezer (Deezer a une API publique de recherche) et un lien de recherche youtube, quand on clique dessus on est directement redirigé vers la page youtube ou le son deezer
 6. V4 : Login factice - juste un champ pseudo en session/localStorage sans vraie auth
 

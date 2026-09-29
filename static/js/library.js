@@ -65,7 +65,7 @@ function renderRecordingCard(recording) {
   if (recording.analysis_status === "done") {
     const title = recording.guessed_title || "Inconnu";
     const artist = recording.guessed_artist || "Inconnu";
-    children.push(el("p", { attrs: { class: "guess-result" }, text: `${title} — ${artist}` }));
+    children.push(el("p", { attrs: { class: "guess-result" }, text: `${title} - ${artist}` }));
 
     if (recording.transcript) {
       children.push(el("p", { attrs: { class: "transcript-text" }, text: `« ${recording.transcript} »` }));

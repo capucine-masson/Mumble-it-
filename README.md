@@ -6,9 +6,8 @@ Tu as un son en tête, mais ni les paroles exactes ni le titre ? **Chante ou fre
 
 - **Enregistrement vocal** directement depuis le navigateur, en appuyant sur le gros logo au centre de l'écran
 - **Réécoute et gestion** de ses fredonnements (bibliothèque personnelle, suppression)
-- **Analyse IA en deux temps** via l'API Groq :
-  1. Transcription audio → texte (Whisper)
-  2. Devinette titre + artiste à partir du texte (LLM, réponse JSON structurée)
+- **Analyse IA** via Groq : transcription (Whisper), puis devinette titre + artiste **ancrée sur une recherche web** (Tavily) en priorité, avec repli sur le LLM seul si le web est indisponible
+- **Réponse honnête** : "Inconnu" plutôt qu'un titre inventé si rien n'est identifié avec certitude
 - **Liens d'écoute automatiques** vers Deezer (API publique) et recherche YouTube
 - **Pseudo factice** (pas de vraie authentification) pour retrouver ses propres fredonnements
 
@@ -17,6 +16,7 @@ Tu as un son en tête, mais ni les paroles exactes ni le titre ? **Chante ou fre
 ### 1. Prérequis
 - Python 3.10+
 - Une clé API [Groq](https://console.groq.com/)
+- (Optionnel mais recommandé) Une clé API [Tavily](https://tavily.com) pour activer la recherche web lors de la devinette
 
 ### 2. Installation
 ```bash
@@ -26,10 +26,13 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configuration
-Copier `.env.example` en `.env` et renseigner ta clé :
+Copier `.env.example` en `.env` et renseigner tes clés :
 ```
 GROQ_API_KEY=ta_cle_groq_ici
+TAVILY_API_KEY=ta_cle_tavily_ici
+ENABLE_WEB_FALLBACK=true
 ```
+- `TAVILY_API_KEY` optionnelle (sans elle : devinette LLM seule) ; `ENABLE_WEB_FALLBACK` (`true`/`false`) active la recherche web en priorité (défaut `true`).
 
 ### 4. Démarrage
 ```bash
@@ -41,38 +44,37 @@ L'application est accessible sur `http://127.0.0.1:8001`.
 
 - **Backend minimal** : FastAPI + accès SQLite direct (pas d'ORM), pour rester simple et lisible
 - **Frontend sans framework** : HTML/Jinja2 + JS vanilla, découpé par responsabilité (`recorder.js`, `analysis.js`, `library.js`, `api.js`...)
-- **Secrets hors code** : clé Groq chargée via `python-dotenv`, `.env` ignoré par git
-- **Sécurité par défaut** : requêtes SQL paramétrées (pas d'injection possible), actions d'écriture en POST/DELETE uniquement, timeouts sur tous les appels externes (Groq, Deezer)
-- **Analyse asynchrone** : lancée en tâche de fond (`BackgroundTasks`) pour ne pas bloquer l'upload de l'enregistrement
+- **Secrets hors code** : clés Groq/Tavily via `python-dotenv`, `.env` ignoré par git
+- **Sécurité par défaut** : requêtes SQL paramétrées, actions d'écriture en POST/DELETE uniquement, timeouts sur tous les appels externes (Groq, Tavily, Deezer)
+- **Analyse asynchrone** : lancée en tâche de fond (`BackgroundTasks`) pour ne pas bloquer l'upload
+- **Recherche web en priorité** sur le LLM seul, car ce dernier peut halluciner un titre plausible sans jamais dire "Inconnu"
 
 ## Architecture
 
 ```
-main.py                 → point d'entrée FastAPI, montage des routers et fichiers statiques
-config.py               → chemins et variables d'environnement
-database.py             → connexion SQLite, schéma, init
-dependencies.py         → résolution du pseudo courant (login factice)
-models.py               → schémas Pydantic (réponses API)
-serializers.py          → conversion lignes SQLite → modèles
+main.py, config.py, database.py    → app FastAPI, config, connexion/schéma SQLite
+dependencies.py, models.py         → pseudo courant (login factice), schémas Pydantic
+serializers.py                     → conversion lignes SQLite → modèles
 
 routers/
-  pages.py              → pages HTML (accueil, bibliothèque)
-  recordings.py         → CRUD des enregistrements audio
-  analysis.py           → déclenchement de l'analyse IA
+  pages.py          → pages HTML (accueil, bibliothèque)
+  recordings.py     → CRUD des enregistrements audio
+  analysis.py       → déclenchement de l'analyse IA
 
 services/
-  groq_client.py        → appels Groq (transcription Whisper + devinette LLM)
-  deezer_client.py       → recherche du morceau sur Deezer
-  analysis_service.py    → orchestration transcription → devinette → lien Deezer
+  groq_client.py       → Groq (transcription Whisper + devinette LLM) et Tavily (recherche web)
+  deezer_client.py     → recherche du morceau sur Deezer
+  analysis_service.py  → orchestration du pipeline ci-dessous
 
-static/                 → CSS et JS (enregistrement, lecture, bibliothèque)
-templates/              → pages Jinja2
-data/                   → base SQLite + fichiers audio uploadés
+static/, templates/    → JS/CSS vanilla, pages Jinja2
+data/                  → base SQLite + fichiers audio uploadés
 ```
 
-**Flux d'une analyse :**
-`Enregistrement audio` → `POST /recordings` → tâche de fond → Groq Whisper (transcription) → Groq Chat (devinette titre/artiste) → Deezer (lien d'écoute) → mise à jour en base → consultable via `GET /recordings/{id}`.
+**Pipeline d'analyse** (`analysis_service.run_analysis`, en tâche de fond) :
+`Whisper (transcription)` → `Tavily (recherche web des paroles, si activée)` → `Groq Chat (devinette ancrée sur le web, ou LLM seul en repli)` → `Deezer (lien d'écoute, sauf si "Inconnu")` → mise à jour en base, consultable via `GET /recordings/{id}`.
 
 ## Aperçu
 
-*(à venir — captures d'écran de l'interface)*
+| Accueil | Bibliothèque |
+|---|---|
+| ![Accueil](apercu/accueil.png) | ![Bibliothèque](apercu/bibli.png) |
