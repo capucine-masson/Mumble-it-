@@ -414,9 +414,25 @@ button {
 }
 
 .modal-message {
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
   color: #fff;
   font-size: 1rem;
+}
+
+.modal-input {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.modal-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .modal-actions {

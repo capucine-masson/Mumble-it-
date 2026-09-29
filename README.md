@@ -1,16 +1,16 @@
-# 🎤 Mumble It
+# Mumble It
 
 Tu as un son en tête, mais ni les paroles exactes ni le titre ? **Chante ou fredonne comme tu peux**, Mumble It transcrit ta voix, envoie ça à une IA qui devine le titre et l'artiste, et te renvoie directement le lien pour écouter le vrai morceau sur Deezer ou YouTube.
 
 ## Fonctionnalités
 
-- 🎙️ **Enregistrement vocal** directement depuis le navigateur, en appuyant sur le gros logo au centre de l'écran
-- 🔁 **Réécoute et gestion** de ses fredonnements (bibliothèque personnelle, suppression)
-- 🧠 **Analyse IA en deux temps** via l'API Groq :
+- **Enregistrement vocal** directement depuis le navigateur, en appuyant sur le gros logo au centre de l'écran
+- **Réécoute et gestion** de ses fredonnements (bibliothèque personnelle, suppression)
+- **Analyse IA en deux temps** via l'API Groq :
   1. Transcription audio → texte (Whisper)
   2. Devinette titre + artiste à partir du texte (LLM, réponse JSON structurée)
-- 🔗 **Liens d'écoute automatiques** vers Deezer (API publique) et recherche YouTube
-- 👤 **Pseudo factice** (pas de vraie authentification) pour retrouver ses propres fredonnements
+- **Liens d'écoute automatiques** vers Deezer (API publique) et recherche YouTube
+- **Pseudo factice** (pas de vraie authentification) pour retrouver ses propres fredonnements
 
 ## Lancer le projet
 
@@ -33,9 +33,9 @@ GROQ_API_KEY=ta_cle_groq_ici
 
 ### 4. Démarrage
 ```bash
-uvicorn main:app --reload
+python -m uvicorn main:app --reload --port 8001
 ```
-L'application est accessible sur `http://127.0.0.1:8000`.
+L'application est accessible sur `http://127.0.0.1:8001`.
 
 ## Choix techniques
 

@@ -1,6 +1,6 @@
 import os
 
-from config import UPLOAD_DIR
+from config import ENABLE_WEB_FALLBACK, UPLOAD_DIR
 from database import get_connection
 from services import deezer_client, groq_client
 
@@ -39,6 +39,15 @@ async def run_analysis(recording_id: int) -> None:
             conn.commit()
 
             guess = await groq_client.guess_song(transcript)
+            if guess["titre"] == "Inconnu" and ENABLE_WEB_FALLBACK:
+                try:
+                    web_guess = await groq_client.guess_song_web(transcript)
+                    if web_guess["titre"] != "Inconnu":
+                        guess = web_guess
+                except groq_client.GroqError:
+                    # La recherche web est un bonus : si elle échoue, on garde "Inconnu"
+                    # plutôt que de faire échouer toute l'analyse.
+                    pass
             conn.execute(
                 "UPDATE recordings SET guessed_title = ?, guessed_artist = ? WHERE id = ?",
                 (guess["titre"], guess["artiste"], recording_id),
